@@ -14,6 +14,9 @@ export function SocketProvider({ children }) {
 
   // Load initial notifications from API
   const fetchNotifications = async () => {
+    if (!API_BASE_URL && typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+      return;
+    }
     try {
       const res = await fetch(getApiUrl('/api/notifications'));
       const contentType = res.headers.get('content-type') || '';
@@ -33,7 +36,12 @@ export function SocketProvider({ children }) {
 
   // Connect to Socket.IO
   useEffect(() => {
-    // If running on a static host like Vercel with no backend URL configured, avoid infinite socket retry spam
+    // If running on a static host like Vercel with no live backend URL configured, avoid WebSocket attempts
+    if (!API_BASE_URL && typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+      console.info('Sahaya Setu: Running on Vercel frontend-only. Connect a live backend via VITE_API_URL for real-time WebSocket notifications.');
+      return;
+    }
+
     const socketEndpoint = API_BASE_URL || (window.location.hostname === 'localhost' ? 'http://localhost:8000' : '/');
 
     const s = io(socketEndpoint, {

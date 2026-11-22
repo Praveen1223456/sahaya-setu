@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth, DEMO_USERS } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
-import { getApiUrl } from '../utils/api';
+import { getApiUrl, API_BASE_URL } from '../utils/api';
 import {
   ShieldAlert,
   Bell,
@@ -32,6 +32,10 @@ export default function Navbar() {
 
   // Check disaster mode status
   useEffect(() => {
+    if (!API_BASE_URL && typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+      return;
+    }
+
     async function checkDisaster() {
       try {
         const res = await fetch(getApiUrl('/api/disaster/status'));

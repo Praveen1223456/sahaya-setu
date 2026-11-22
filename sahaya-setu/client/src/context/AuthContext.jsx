@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getApiUrl } from '../utils/api';
+import { getApiUrl, API_BASE_URL } from '../utils/api';
 
 const AuthContext = createContext(null);
 
@@ -72,6 +72,14 @@ export function AuthProvider({ children }) {
     async function loadUser() {
       if (!token) {
         setUser(null);
+        setLoading(false);
+        return;
+      }
+      if (!API_BASE_URL && typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+        const savedDemo = localStorage.getItem('sahaya_demo_user');
+        if (savedDemo) {
+          try { setUser(JSON.parse(savedDemo)); } catch {}
+        }
         setLoading(false);
         return;
       }
@@ -149,11 +157,25 @@ export function AuthProvider({ children }) {
   function logout() {
     localStorage.removeItem('sahaya_jwt_token');
     localStorage.removeItem('ss.staffToken');
+    localStorage.removeItem('sahaya_demo_user');
     setToken('');
     setUser(null);
   }
 
   async function switchDemoUser(demoUser) {
+    if (!API_BASE_URL && typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+      const mockUser = {
+        _id: `demo_${demoUser.role}`,
+        id: `demo_${demoUser.role}`,
+        name: demoUser.label.split('(')[1]?.replace(')', '') || demoUser.label,
+        email: demoUser.email,
+        role: demoUser.role,
+        department: demoUser.department || (demoUser.role === 'field_employee' ? 'electricity' : null),
+      };
+      localStorage.setItem('sahaya_demo_user', JSON.stringify(mockUser));
+      setUser(mockUser);
+      return mockUser;
+    }
     try {
       return await login(demoUser.email, demoUser.password);
     } catch (e) {
