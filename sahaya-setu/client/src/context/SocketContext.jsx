@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext';
+import { API_BASE_URL, getApiUrl } from '../utils/api';
 
 const SocketContext = createContext(null);
 
@@ -14,8 +15,9 @@ export function SocketProvider({ children }) {
   // Load initial notifications from API
   const fetchNotifications = async () => {
     try {
-      const res = await fetch('/api/notifications');
-      if (res.ok) {
+      const res = await fetch(getApiUrl('/api/notifications'));
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
         const data = await res.json();
         setNotifications(data.notifications || []);
         setUnreadCount(data.unread_count || 0);
@@ -31,8 +33,17 @@ export function SocketProvider({ children }) {
 
   // Connect to Socket.IO
   useEffect(() => {
-    const s = io('/', {
+    // If running on a static host like Vercel with no backend URL configured, avoid infinite socket retry spam
+    const socketEndpoint = API_BASE_URL || (window.location.hostname === 'localhost' ? 'http://localhost:8000' : '/');
+
+    const s = io(socketEndpoint, {
       transports: ['websocket', 'polling'],
+      reconnectionAttempts: 4,
+      timeout: 6000,
+    });
+
+    s.on('connect_error', (err) => {
+      console.warn('WebSocket connection attempt failed (ensure backend server is running):', err.message);
     });
 
     s.on('connect', () => {
@@ -71,7 +82,7 @@ export function SocketProvider({ children }) {
 
   const markAllRead = async () => {
     try {
-      await fetch('/api/notifications/mark-all-read', { method: 'POST' });
+      await fetch(getApiUrl('/api/notifications/mark-all-read'), { method: 'POST' });
       setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
       setUnreadCount(0);
     } catch (err) {
@@ -81,7 +92,7 @@ export function SocketProvider({ children }) {
 
   const markRead = async (id) => {
     try {
-      await fetch(`/api/notifications/${id}/read`, { method: 'PATCH' });
+      await fetch(getApiUrl(`/api/notifications/${id}/read`), { method: 'PATCH' });
       setNotifications((prev) =>
         prev.map((n) => (n._id === id ? { ...n, read: true } : n))
       );

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth, DEMO_USERS } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
+import { getApiUrl } from '../utils/api';
 import {
   ShieldAlert,
   Bell,
@@ -33,13 +34,14 @@ export default function Navbar() {
   useEffect(() => {
     async function checkDisaster() {
       try {
-        const res = await fetch('/api/disaster/status');
-        if (res.ok) {
+        const res = await fetch(getApiUrl('/api/disaster/status'));
+        const contentType = res.headers.get('content-type') || '';
+        if (res.ok && contentType.includes('application/json')) {
           const data = await res.json();
-          setIsDisasterMode(data.is_disaster_mode);
+          setIsDisasterMode(Boolean(data.is_disaster_mode));
         }
       } catch (err) {
-        console.warn('Failed to fetch disaster mode status:', err);
+        // Silently skip if backend is unreachable
       }
     }
     checkDisaster();

@@ -3,7 +3,7 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!api|socket\\.io|geo|reports|sos|voice|track|incidents|citizens|alerts|shelters|auth|outbox|sitrep|public|uploads|shared|vendor).*)",
       "destination": "/index.html"
     }
   ]

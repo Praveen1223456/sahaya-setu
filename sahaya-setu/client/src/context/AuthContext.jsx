@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getApiUrl } from '../utils/api';
 
 const AuthContext = createContext(null);
 
@@ -75,10 +76,11 @@ export function AuthProvider({ children }) {
         return;
       }
       try {
-        const res = await fetch('/api/auth/me', {
+        const res = await fetch(getApiUrl('/api/auth/me'), {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (res.ok) {
+        const contentType = res.headers.get('content-type') || '';
+        if (res.ok && contentType.includes('application/json')) {
           const data = await res.json();
           setUser(data.user);
           // Also set legacy staffToken for backward compatibility
@@ -92,7 +94,7 @@ export function AuthProvider({ children }) {
             const mapped = tokenMap[data.user?.department] || (data.user?.role === 'super_admin' ? 'control-demo' : 'elec-demo');
             localStorage.setItem('ss.staffToken', mapped);
           }
-        } else {
+        } else if (res.status === 401) {
           logout();
         }
       } catch (err) {
@@ -105,14 +107,18 @@ export function AuthProvider({ children }) {
   }, [token]);
 
   async function login(email, password) {
-    const res = await fetch('/api/auth/login', {
+    const res = await fetch(getApiUrl('/api/auth/login'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      throw new Error('Backend server is currently offline or unreachable');
+    }
     const data = await res.json();
     if (!res.ok) {
-      throw new Error(data.detail || 'Login failed');
+      throw new Error(data.detail || data.error || 'Login failed');
     }
     localStorage.setItem('sahaya_jwt_token', data.token);
     setToken(data.token);
@@ -121,14 +127,18 @@ export function AuthProvider({ children }) {
   }
 
   async function register(userData) {
-    const res = await fetch('/api/auth/register', {
+    const res = await fetch(getApiUrl('/api/auth/register'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),
     });
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      throw new Error('Backend server is currently offline or unreachable');
+    }
     const data = await res.json();
     if (!res.ok) {
-      throw new Error(data.detail || 'Registration failed');
+      throw new Error(data.detail || data.error || 'Registration failed');
     }
     localStorage.setItem('sahaya_jwt_token', data.token);
     setToken(data.token);
