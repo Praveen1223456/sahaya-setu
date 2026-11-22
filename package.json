@@ -5,7 +5,7 @@
   "scripts": {
     "start": "npm --prefix sahaya-setu start",
     "dev": "npm --prefix sahaya-setu run dev",
-    "build": "npm --prefix sahaya-setu run build",
+    "build": "npm --prefix sahaya-setu run build && node scripts/copy-dist.js",
     "seed": "npm --prefix sahaya-setu run seed",
     "test": "npm --prefix sahaya-setu test"
   },
