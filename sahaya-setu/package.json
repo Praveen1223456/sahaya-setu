@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "build": "vite build --config client/vite.config.js",
+    "build": "vite build",
     "seed": "node scripts/seed_smart_civic.js",
     "seed:legacy": "node scripts/seed_demo.js",
     "test": "node --test-concurrency=1 --test tests/mern.test.js tests/smart_civic.test.js tests/image_loading.test.js tests/voice.test.js",
