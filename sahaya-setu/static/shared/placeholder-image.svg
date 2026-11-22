@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#f1f5f9"/>
+  <g fill="#94a3b8" transform="translate(160, 95)">
+    <path d="M70 10H10C4.5 10 0 14.5 0 20v40c0 5.5 4.5 10 10 10h60c5.5 0 10-4.5 10-10V20c0-5.5-4.5-10-10-10zM10 16h60c2.2 0 4 1.8 4 4v27.2l-14.6-14.6c-1.6-1.6-4.1-1.6-5.7 0L38.4 47.9l-8.6-8.6c-1.6-1.6-4.1-1.6-5.7 0L10 53.4V20c0-2.2 1.8-4 4-4zm60 48H10c-2.2 0-4-1.8-4-4v-1.8l16.7-16.7 8.6 8.6c1.6 1.6 4.1 1.6 5.7 0l15.3-15.3 21.7 21.7V60c0 2.2-1.8 4-4 4z"/>
+    <circle cx="26" cy="30" r="6"/>
+  </g>
+  <text x="200" y="195" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#64748b">No Photo Available</text>
+  <text x="200" y="218" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#94a3b8">Sahaya Setu Civic Records</text>
+</svg>

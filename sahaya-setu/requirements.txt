@@ -1,0 +1,16 @@
+# Tested with: fastapi 0.163, uvicorn 0.54, SQLAlchemy 2.1, pydantic 2.14, ImageHash 4.3,
+# Pillow 13, numpy 2.5, httpx 0.28, pytest 9 on Python 3.12
+fastapi>=0.110
+uvicorn[standard]>=0.29
+sqlalchemy>=2.0
+pydantic>=2.5
+python-multipart>=0.0.9
+imagehash>=4.3
+pillow>=10.0
+numpy>=1.26
+httpx>=0.27
+pytest>=8.0
+
+# Optional
+# playwright            browser tests in scripts/e2e_*.py (then: playwright install chromium)
+# open_clip_torch torch  "same scene, different angle" duplicate check (set ENABLE_CLIP=1)

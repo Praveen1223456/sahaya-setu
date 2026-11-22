@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DEMO ONLY: a made-up CAP 1.2 alert for testing the import. Not a real warning. -->
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+  <identifier>DEMO-SAHAYA-SETU-0001</identifier>
+  <sender>demo@sahaya-setu.local</sender>
+  <sent>2026-11-16T09:00:00+05:30</sent>
+  <status>Exercise</status>
+  <msgType>Alert</msgType>
+  <scope>Public</scope>
+  <info>
+    <language>en-IN</language>
+    <category>Met</category>
+    <event>Cyclone</event>
+    <urgency>Immediate</urgency>
+    <severity>Extreme</severity>
+    <certainty>Likely</certainty>
+    <expires>2026-12-31T23:59:00+05:30</expires>
+    <headline>DEMO: Severe cyclone expected to cross the Konaseema coast tonight</headline>
+    <description>DEMO EXERCISE. Very heavy rain and winds up to 110 km/h expected along the coast.</description>
+    <instruction>Move to the nearest cyclone shelter before 6 PM. Keep phones charged. Do not go to sea.</instruction>
+    <area>
+      <areaDesc>Coastal mandals of Dr. B.R. Ambedkar Konaseema district (demo)</areaDesc>
+      <circle>16.5787,82.0061 25</circle>
+    </area>
+  </info>
+  <info>
+    <language>te-IN</language>
+    <category>Met</category>
+    <event>తుఫాను</event>
+    <urgency>Immediate</urgency>
+    <severity>Extreme</severity>
+    <certainty>Likely</certainty>
+    <headline>డెమో: ఈ రాత్రి కోనసీమ తీరాన్ని తీవ్ర తుఫాను దాటే అవకాశం</headline>
+    <description>డెమో అభ్యాసం. తీరం వెంబడి అతి భారీ వర్షాలు, గంటకు 110 కి.మీ. వరకు గాలులు.</description>
+    <instruction>సాయంత్రం 6 లోపు దగ్గరలోని తుఫాను షెల్టర్‌కు వెళ్ళండి. ఫోన్ ఛార్జ్ చేసుకోండి. సముద్రంలోకి వెళ్ళవద్దు.</instruction>
+    <area>
+      <areaDesc>కోనసీమ తీర మండలాలు (డెమో)</areaDesc>
+      <circle>16.5787,82.0061 25</circle>
+    </area>
+  </info>
+</alert>

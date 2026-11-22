@@ -1,0 +1,113 @@
+/* Sahaya Setu shared design system.
+   Tarpaulin blue (relief sheets), rain-grey ground, signal red only for SOS.
+   Hind Guntur covers Telugu and Latin in one family. */
+
+@font-face { font-family: "Hind Guntur"; font-weight: 400; font-display: swap;
+  src: url("fonts/hind-guntur-telugu-400-normal.woff2") format("woff2"); unicode-range: U+0951-0952, U+0964-0965, U+0C00-0C7F, U+1CDA, U+1CF2, U+200C-200D, U+25CC; }
+@font-face { font-family: "Hind Guntur"; font-weight: 500; font-display: swap;
+  src: url("fonts/hind-guntur-telugu-500-normal.woff2") format("woff2"); unicode-range: U+0951-0952, U+0964-0965, U+0C00-0C7F, U+1CDA, U+1CF2, U+200C-200D, U+25CC; }
+@font-face { font-family: "Hind Guntur"; font-weight: 600; font-display: swap;
+  src: url("fonts/hind-guntur-telugu-600-normal.woff2") format("woff2"); unicode-range: U+0951-0952, U+0964-0965, U+0C00-0C7F, U+1CDA, U+1CF2, U+200C-200D, U+25CC; }
+@font-face { font-family: "Hind Guntur"; font-weight: 700; font-display: swap;
+  src: url("fonts/hind-guntur-telugu-700-normal.woff2") format("woff2"); unicode-range: U+0951-0952, U+0964-0965, U+0C00-0C7F, U+1CDA, U+1CF2, U+200C-200D, U+25CC; }
+@font-face { font-family: "Hind Guntur"; font-weight: 400; font-display: swap;
+  src: url("fonts/hind-guntur-latin-400-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Hind Guntur"; font-weight: 500; font-display: swap;
+  src: url("fonts/hind-guntur-latin-500-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Hind Guntur"; font-weight: 600; font-display: swap;
+  src: url("fonts/hind-guntur-latin-600-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Hind Guntur"; font-weight: 700; font-display: swap;
+  src: url("fonts/hind-guntur-latin-700-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root {
+  --tarp: #1b4f9c;        /* relief-sheet blue: brand and primary actions */
+  --tarp-deep: #0f3166;
+  --tarp-wash: #dce6f4;
+  --rain: #e9eef4;        /* page ground */
+  --paper: #ffffff;
+  --ink: #142033;
+  --ink-soft: #4a5870;
+  --line: #c9d3df;
+  --signal: #d42a20;      /* SOS only */
+  --signal-deep: #9e1c15;
+  --orange: #e8780c;
+  --yellow: #f2c230;
+  --leaf: #1f7a4a;
+  --leaf-wash: #dcefe3;
+  --violet: #5e4fa2;      /* needs review */
+
+  --font: "Hind Guntur", "Noto Sans Telugu", system-ui, sans-serif;
+  --s-1: 0.8125rem; --s0: 1rem; --s1: 1.25rem; --s2: 1.625rem; --s3: 2.25rem; --s4: 3.5rem;
+  --gap: 1rem;
+  --edge: 6px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; font-family: var(--font); font-size: var(--s0); line-height: 1.5;
+  color: var(--ink); background: var(--rain);
+  font-variant-numeric: tabular-nums;
+}
+h1, h2, h3 { line-height: 1.15; margin: 0 0 .5rem; font-weight: 600; }
+h1 { font-size: var(--s2); } h2 { font-size: var(--s1); } h3 { font-size: var(--s0); }
+p { margin: 0 0 .75rem; max-width: 70ch; }
+a { color: var(--tarp); }
+img { max-width: 100%; display: block; }
+:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Bilingual label: first line in the chosen language, second line smaller. */
+.bi { display: flex; flex-direction: column; gap: .05em; }
+.bi > :first-child { font-weight: 600; }
+.bi > :last-child { font-size: .78em; font-weight: 400; opacity: .82; }
+
+.btn {
+  appearance: none; border: 2px solid transparent; border-radius: var(--edge);
+  font: inherit; font-weight: 600; cursor: pointer; padding: .7rem 1.1rem; min-height: 48px;
+  background: var(--tarp); color: #fff; text-align: left; text-decoration: none;
+  display: inline-flex; align-items: center; gap: .6rem;
+}
+.btn:hover { background: var(--tarp-deep); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn.ghost { background: var(--paper); color: var(--tarp-deep); border-color: var(--line); }
+.btn.ghost:hover { border-color: var(--tarp); }
+.btn.danger { background: var(--signal); }
+.btn.danger:hover { background: var(--signal-deep); }
+.btn.ok { background: var(--leaf); }
+.btn.small { min-height: 36px; padding: .35rem .75rem; font-size: var(--s-1); }
+
+.pill {
+  display: inline-block; padding: .1rem .55rem; border-radius: 999px; font-size: var(--s-1);
+  font-weight: 600; background: var(--tarp-wash); color: var(--tarp-deep); white-space: nowrap;
+}
+.st-received { background: var(--tarp-wash); color: var(--tarp-deep); }
+.st-review { background: #e6e2f4; color: var(--violet); }
+.st-assigned { background: #d8ecf3; color: #175a73; }
+.st-in_progress { background: #fde6cf; color: #8a4505; }
+.st-resolved { background: var(--leaf-wash); color: var(--leaf); }
+.st-closed { background: #e4e8e5; color: #3d5246; }
+.st-escalated { background: #fbdcd9; color: var(--signal-deep); }
+.st-rejected, .st-merged { background: #e9ebee; color: #5a6270; }
+.lv-red { background: var(--signal); color: #fff; }
+.lv-orange { background: var(--orange); color: #fff; }
+.lv-yellow { background: var(--yellow); color: #3b2c00; }
+
+label.field { display: grid; gap: .3rem; font-weight: 500; }
+input, select, textarea {
+  font: inherit; color: var(--ink); background: var(--paper); border: 2px solid var(--line);
+  border-radius: var(--edge); padding: .6rem .7rem; min-height: 48px; width: 100%;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--tarp); outline: none; }
+textarea { min-height: 90px; resize: vertical; }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(1.2rem + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  background: var(--ink); color: #fff; padding: .75rem 1.1rem; border-radius: var(--edge);
+  max-width: min(92vw, 520px); z-index: 9999; box-shadow: 0 6px 24px rgba(20, 32, 51, .25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

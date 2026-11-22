@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="te">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sahaya Setu</title>
+<link rel="icon" href="/shared/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/base.css">
+<style>
+  body { min-height: 100vh; display: grid; grid-template-rows: 1fr auto; }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 3rem 1.25rem 2rem; display: grid; grid-template-columns: 1.1fr 1fr; gap: 3rem; align-items: center; }
+  h1 { font-size: var(--s4); line-height: 1; margin-bottom: .25rem; color: var(--tarp-deep); }
+  .en { font-size: var(--s2); color: var(--tarp); font-weight: 600; margin-bottom: 1.25rem; }
+  .lede { font-size: var(--s1); }
+  .doors { display: grid; gap: .6rem; }
+  .door { display: grid; gap: .1rem; padding: 1rem 1.1rem; border-radius: var(--edge); background: var(--paper); text-decoration: none; color: var(--ink); border: 2px solid var(--line); }
+  .door:hover { border-color: var(--tarp); }
+  .door b { font-size: var(--s1); }
+  .door span { color: var(--ink-soft); font-size: var(--s-1); }
+  .door.citizen { background: var(--tarp); color: #fff; border-color: var(--tarp); }
+  .door.citizen span { color: #dbe6f6; }
+  footer { text-align: center; padding: 1rem; font-size: var(--s-1); color: var(--ink-soft); }
+  @media (max-width: 760px) { .wrap { grid-template-columns: 1fr; gap: 1.5rem; padding-top: 2rem; } h1 { font-size: var(--s3); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <img src="/shared/icon.svg" alt="" width="64" height="64">
+    <h1>సహాయ సేతు</h1>
+    <p class="en">Sahaya Setu</p>
+    <p class="lede">When a cyclone takes the network down, your report still reaches the right officer, and you are told when it is fixed.</p>
+    <p lang="te">తుఫాను వల్ల నెట్‌వర్క్ పోయినా, మీ ఫిర్యాదు సరైన అధికారికి చేరుతుంది. పరిష్కారమైనప్పుడు మీకు తెలుస్తుంది.</p>
+  </div>
+  <nav class="doors" aria-label="Open an app">
+    <a class="door citizen" href="/citizen/"><b>Citizen app</b><span>Report with a live photo, send SOS, track your ticket. Works offline.</span></a>
+    <a class="door" href="/dashboard/"><b>Control room</b><span>Live queue, SOS alarm, map, warnings and situation report.</span></a>
+    <a class="door" href="/field/"><b>Field team</b><span>Nearest jobs, navigation, and a proof photo when fixed.</span></a>
+    <a class="door" href="/board/"><b>Public board</b><span>What was reported and how fast each department fixed it.</span></a>
+    <a class="door" href="/docs"><b>API reference</b><span>For the SMS gateway, voice line and other integrations.</span></a>
+  </nav>
+</div>
+<footer>Prototype for the IDEA//FORGE hackathon. Demo data only.</footer>
+</body>
+</html>

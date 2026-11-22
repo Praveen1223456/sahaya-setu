@@ -1,0 +1,15 @@
+{
+  "name": "sahaya-setu-root",
+  "version": "0.2.0",
+  "private": true,
+  "scripts": {
+    "start": "npm --prefix sahaya-setu start",
+    "dev": "npm --prefix sahaya-setu run dev",
+    "build": "npm --prefix sahaya-setu run build",
+    "seed": "npm --prefix sahaya-setu run seed",
+    "test": "npm --prefix sahaya-setu test"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  }
+}

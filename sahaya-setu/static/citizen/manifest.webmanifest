@@ -1,0 +1,17 @@
+{
+  "name": "సహాయ సేతు – Sahaya Setu",
+  "short_name": "Sahaya Setu",
+  "description": "Report disaster problems, send SOS and track fixes, even without network.",
+  "start_url": "/citizen/",
+  "scope": "/citizen/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#e9eef4",
+  "theme_color": "#1b4f9c",
+  "lang": "te",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

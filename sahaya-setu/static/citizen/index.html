@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="te">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1b4f9c">
+<title>సహాయ సేతు – Sahaya Setu</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="/shared/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="/shared/base.css">
+<link rel="stylesheet" href="citizen.css">
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="#/home" aria-label="Home">
+    <img src="/shared/icon.svg" alt="" width="32" height="32">
+    <span class="bi"><span>సహాయ సేతు</span><span>Sahaya Setu</span></span>
+  </a>
+  <div class="bar-right">
+    <button class="net" id="net" type="button" aria-live="polite"></button>
+    <button class="lang" id="lang" type="button" aria-label="Change language">English</button>
+  </div>
+</header>
+
+<main id="app">
+  <!-- Home -->
+  <section id="s-home" class="screen">
+    <div id="alerts"></div>
+    <div class="sos-wrap">
+      <button class="sos-big" id="sos-open" type="button">
+        <span class="sos-word">SOS</span>
+        <span data-k="sos_open_hint"></span>
+      </button>
+    </div>
+    <nav class="tiles">
+      <a class="tile main" href="#/report">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        <span><span data-k="report"></span><small data-k="report_sub"></small></span>
+      </a>
+      <a class="tile" href="#/speak">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg>
+        <span data-k="speak"></span>
+      </a>
+      <a class="tile" href="#/tickets">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h4"/></svg>
+        <span data-k="tickets"></span>
+      </a>
+      <a class="tile" href="#/relay">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM18 18h3v3h-3z"/></svg>
+        <span data-k="relay"></span>
+      </a>
+      <a class="tile" href="#/profile">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-4 3-6 6-6s6 2 6 6M14 20c0-3 1.5-5 3-5s4 2 4 5"/></svg>
+        <span data-k="profile"></span>
+      </a>
+    </nav>
+    <p class="foot" data-k="emergency_note"></p>
+  </section>
+
+  <!-- Camera -->
+  <section id="s-report" class="screen dark" hidden>
+    <div class="cam">
+      <video id="video" playsinline muted autoplay></video>
+      <div class="gps" id="gps-pill"></div>
+      <div class="stamp-preview" id="stamp-preview"></div>
+      <p class="cam-msg" id="cam-msg" hidden></p>
+    </div>
+    <div class="cam-actions">
+      <a class="btn ghost" href="#/home" data-k="back"></a>
+      <button class="shutter" id="shutter" type="button"><span class="sr-only">Take photo</span></button>
+      <span class="spacer"></span>
+    </div>
+  </section>
+
+  <!-- Review and send -->
+  <section id="s-review" class="screen" hidden>
+    <figure class="shot"><img id="shot" alt="Photo you took, with location stamp"></figure>
+    <p class="ai-hint" id="ai-hint" hidden></p>
+    <h2 data-k="what_problem"></h2>
+    <div class="cats" id="cats" role="radiogroup"></div>
+    <h2 data-k="people_affected"></h2>
+    <div class="stepper" data-stepper="people" data-min="0" data-max="500" data-value="0"></div>
+    <label class="check"><input type="checkbox" id="danger"> <span data-k="danger_now"></span></label>
+    <label class="field"><span data-k="note"></span><textarea id="note" maxlength="1000"></textarea></label>
+    <div class="row">
+      <a class="btn ghost" href="#/report" data-k="retake"></a>
+      <button class="btn" id="send-report" type="button" data-k="send" disabled></button>
+    </div>
+  </section>
+
+  <!-- Result -->
+  <section id="s-result" class="screen" hidden>
+    <div class="result" id="result"></div>
+  </section>
+
+  <!-- SOS setup -->
+  <section id="s-sos" class="screen sos-screen" hidden>
+    <h1 data-k="sos_title"></h1>
+    <h2 data-k="sos_what"></h2>
+    <div class="chips" id="sos-types" role="radiogroup"></div>
+    <h2 data-k="how_many"></h2>
+    <div class="stepper" data-stepper="sos-people" data-min="1" data-max="200" data-value="1"></div>
+    <div class="hold-wrap">
+      <button class="hold" id="hold" type="button" style="--p:0">
+        <span class="sos-word">SOS</span>
+        <span data-k="hold_send"></span>
+      </button>
+    </div>
+    <a class="btn ghost" href="#/home" data-k="back"></a>
+    <div class="countdown" id="countdown" hidden>
+      <p class="count-n" id="count-n">5</p>
+      <p id="count-text"></p>
+      <button class="btn ghost big" id="count-cancel" type="button" data-k="cancel"></button>
+    </div>
+  </section>
+
+  <!-- Active SOS -->
+  <section id="s-sos-active" class="screen sos-live" hidden>
+    <div class="sos-status" id="sos-status"></div>
+    <div class="grid2">
+      <a class="btn danger" id="sos-sms" href="#" data-k="send_sms"></a>
+      <a class="btn" href="tel:112" data-k="call112"></a>
+      <a class="btn ghost" id="sos-family" href="#" data-k="alert_family"></a>
+      <button class="btn ghost" id="sos-flash" type="button" data-k="flash"></button>
+      <button class="btn ghost" id="sos-siren" type="button" data-k="siren"></button>
+      <button class="btn ghost" id="sos-qr" type="button" data-k="show_qr"></button>
+    </div>
+    <div class="safety" data-k="sos_wait_tips"></div>
+    <button class="btn ok" id="sos-safe" type="button" data-k="im_safe"></button>
+  </section>
+  <div class="flash" id="flash" hidden></div>
+
+  <!-- Speak -->
+  <section id="s-speak" class="screen" hidden>
+    <h1 data-k="speak_title"></h1>
+    <p data-k="speak_help"></p>
+    <button class="btn big mic" id="mic" type="button" data-k="start_listen"></button>
+    <p class="warn" id="speech-unsupported" hidden data-k="speech_unsupported"></p>
+    <label class="field"><span data-k="type_instead"></span><textarea id="speech-text" maxlength="2000"></textarea></label>
+    <div class="row">
+      <a class="btn ghost" href="#/home" data-k="back"></a>
+      <button class="btn" id="send-speech" type="button" data-k="send"></button>
+    </div>
+  </section>
+
+  <!-- My tickets -->
+  <section id="s-tickets" class="screen" hidden>
+    <h1 data-k="tickets"></h1>
+    <div id="pending-list"></div>
+    <ol class="tickets" id="ticket-list"></ol>
+    <a class="btn ghost" href="#/home" data-k="back"></a>
+  </section>
+
+  <section id="s-ticket" class="screen" hidden>
+    <div id="ticket-detail"></div>
+    <a class="btn ghost" href="#/tickets" data-k="back"></a>
+  </section>
+
+  <!-- Relay -->
+  <section id="s-relay" class="screen" hidden>
+    <h1 data-k="relay_title"></h1>
+    <p data-k="relay_help"></p>
+    <div class="relay-tabs">
+      <button class="btn" id="relay-show" type="button" data-k="my_codes"></button>
+      <button class="btn ghost" id="relay-scan" type="button" data-k="scan_neighbour"></button>
+    </div>
+    <div id="relay-body"></div>
+    <a class="btn ghost" href="#/home" data-k="back"></a>
+  </section>
+
+  <!-- Profile -->
+  <section id="s-profile" class="screen" hidden>
+    <h1 data-k="profile_title"></h1>
+    <p data-k="profile_help"></p>
+    <form id="profile-form" class="form">
+      <label class="field"><span data-k="phone"></span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" required></label>
+      <label class="field"><span data-k="name"></span><input name="name" autocomplete="name"></label>
+      <label class="field"><span data-k="village"></span><input name="village"></label>
+      <label class="field"><span data-k="household"></span><input name="household_size" type="number" min="1" max="50" value="1"></label>
+      <fieldset class="needs"><legend data-k="needs"></legend><div id="needs"></div></fieldset>
+      <label class="field"><span data-k="medical"></span><input name="medical_notes" maxlength="300"></label>
+      <label class="field"><span data-k="contacts"></span><input name="contacts" inputmode="tel" placeholder="9876543210, 9123456780"></label>
+      <label class="check"><input type="checkbox" name="consent"> <span data-k="consent"></span></label>
+      <button class="btn" type="submit" data-k="save"></button>
+    </form>
+    <a class="btn ghost" href="#/home" data-k="back"></a>
+  </section>
+</main>
+
+<script src="/vendor/qrcode.js"></script>
+<script src="/vendor/jsQR.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

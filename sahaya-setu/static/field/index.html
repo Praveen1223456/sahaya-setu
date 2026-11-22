@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f3166">
+<title>Sahaya Setu – Field team</title>
+<link rel="icon" href="/shared/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/base.css">
+<style>
+  body { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .bar { position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; gap: .5rem;
+    background: var(--tarp-deep); color: #fff; padding: calc(.6rem + env(safe-area-inset-top, 0px)) 1rem .6rem; }
+  .bar b { font-size: var(--s1); } .bar small { display: block; opacity: .8; }
+  .bar .btn { background: transparent; border-color: rgba(255,255,255,.45); }
+  main { max-width: 560px; margin: 0 auto; padding: 1rem; }
+  .login { display: grid; gap: .8rem; background: var(--paper); padding: 1.25rem; border-radius: var(--edge); border-top: 8px solid var(--yellow); }
+  .jobs { list-style: none; padding: 0; margin: 0; display: grid; gap: .6rem; }
+  .job { display: grid; grid-template-columns: 1fr auto; gap: .15rem .6rem; background: var(--paper); border-radius: var(--edge);
+    padding: .8rem .9rem; border-left: 6px solid var(--tarp); cursor: pointer; text-align: left; font: inherit; color: inherit; border-top: 0; border-right: 0; border-bottom: 0; width: 100%; }
+  .job.sos { border-left-color: var(--signal); background: #fdecea; }
+  .job.working { border-left-color: var(--orange); }
+  .job .code { font-weight: 700; font-size: var(--s1); }
+  .job .dist { font-weight: 700; text-align: right; }
+  .job .where, .job .meta { grid-column: 1 / -1; font-size: var(--s-1); color: var(--ink-soft); }
+  .late { color: var(--signal-deep); font-weight: 700; }
+  .detail img { border-radius: var(--edge); margin: .6rem 0; width: 100%; max-height: 320px; object-fit: contain; background: #0a1424; }
+  .big { width: 100%; justify-content: center; min-height: 60px; font-size: var(--s1); margin-top: .6rem; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-top: .6rem; }
+  .row .btn { justify-content: center; }
+  .sosbox { background: #fdecea; border-left: 6px solid var(--signal); padding: .8rem; border-radius: var(--edge); margin: .6rem 0; }
+  .empty { background: var(--paper); padding: 1.25rem; border-radius: var(--edge); }
+  .head { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; margin-bottom: .6rem; }
+</style>
+</head>
+<body>
+<header class="bar"><div><b>Field team</b><small id="who">Sahaya Setu</small></div><button class="btn small" id="out" hidden>Sign out</button></header>
+<main id="main"></main>
+<input type="file" id="proof" accept="image/*" capture="environment" hidden>
+<script src="/shared/staff.js"></script>
+<script>
+(() => {
+  'use strict';
+  const { people, api, esc, STATUS, CATEGORY, ist, due, toast, token, setToken, clearToken } = SS;
+  const $ = (s) => document.querySelector(s);
+  const S = { me: null, pos: null, list: [], current: null, timer: null };
+
+  function km(a, b, c, d) {
+    const r = Math.PI / 180, x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2;
+    return 12742 * Math.asin(Math.sqrt(x));
+  }
+  function login(msg) {
+    $('#main').innerHTML = `<form class="login" id="lf"><h1>Sign in</h1><p>Use your department's staff token.</p>
+      <label class="field">Staff token<input name="t" required autocomplete="off"></label>
+      ${msg ? `<p class="late">${esc(msg)}</p>` : ''}<button class="btn" type="submit">Sign in</button>
+      <p class="hint">Demo: elec-demo, health-demo, rescue-demo, roads-demo, transport-demo</p></form>`;
+    $('#lf').onsubmit = (e) => { e.preventDefault(); start(e.target.t.value.trim()); };
+  }
+  async function start(tok) {
+    setToken(tok);
+    try { S.me = await api('/auth/me'); } catch (e) { clearToken(); return login(e.status === 401 ? 'That token is not valid.' : e.message); }
+    $('#who').textContent = S.me.name; $('#out').hidden = false;
+    if ('geolocation' in navigator) navigator.geolocation.watchPosition((p) => { S.pos = [p.coords.latitude, p.coords.longitude]; if (!S.current) render(); },
+      () => {}, { enableHighAccuracy: true, maximumAge: 20000 });
+    load(); S.timer = setInterval(load, 15000);
+  }
+  async function load() {
+    try { S.list = (await api('/incidents?status=received,review,assigned,in_progress,escalated')).items; } catch (e) { if (e.status === 401) { clearToken(); return login(); } return; }
+    if (S.current) showJob(S.current, false); else render();
+  }
+  function render() {
+    S.current = null;
+    const items = S.list.map((i) => ({ ...i, dist: S.pos && i.lat != null ? km(S.pos[0], S.pos[1], i.lat, i.lon) : null }));
+    items.sort((a, b) => (b.is_sos - a.is_sos) || ((a.dist ?? 1e9) - (b.dist ?? 1e9)) || (b.priority - a.priority));
+    $('#main').innerHTML = `<div class="head"><h1>${items.length} ${items.length === 1 ? 'job' : 'jobs'}</h1><span class="hint">${S.pos ? 'Nearest first' : 'Turn on location to sort by distance'}</span></div>`
+      + (items.length ? `<ul class="jobs">${items.map((i) => {
+        const d = due(i.sla_due_at);
+        return `<li><button class="job ${i.is_sos ? 'sos' : ''} ${['assigned', 'in_progress'].includes(i.status) ? 'working' : ''}" data-id="${i.id}" type="button">
+          <span class="code">${esc(i.ticket_code)} ${i.is_sos ? 'SOS' : ''}</span><span class="dist">${i.dist != null ? i.dist.toFixed(1) + ' km' : ''}</span>
+          <span>${esc(CATEGORY[i.category] || i.category)}</span><span class="pill st-${esc(i.status)}">${esc(STATUS[i.status])}</span>
+          <span class="where">${esc(i.address || 'Location unknown')}</span>
+          <span class="meta ${d.late ? 'late' : ''}">${esc(d.text)}${i.people_count ? `, ${people(i.people_count)}` : ''}</span></button></li>`;
+      }).join('')}</ul>` : '<p class="empty">No open jobs for your team. New jobs appear here automatically.</p>');
+    document.querySelectorAll('.job').forEach((b) => b.onclick = () => showJob(+b.dataset.id, true));
+  }
+  async function showJob(id, scroll) {
+    S.current = id;
+    let d;
+    try { d = await api('/incidents/' + id); } catch (e) { toast(e.message); return render(); }
+    if (document.activeElement?.id === 'note') return;
+    const phone = d.sos_phone || d.reports.find((r) => r.phone)?.phone;
+    const nav = d.lat != null ? `https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lon}` : '';
+    const dl = due(d.sla_due_at);
+    $('#main').innerHTML = `<div class="detail"><button class="btn small ghost" id="back" type="button">All jobs</button>
+      <h1>${esc(d.ticket_code)} ${d.is_sos ? 'SOS' : ''}</h1>
+      <p><span class="pill st-${esc(d.status)}">${esc(STATUS[d.status])}</span> <b>${esc(CATEGORY[d.category] || d.category)}</b></p>
+      <p>${esc(d.address || 'Location unknown')}</p>
+      <p class="${dl.late ? 'late' : ''}">${esc(dl.text)}. ${d.report_count} reports${d.people_count ? `, ${people(d.people_count)}` : ''}.</p>
+      ${d.is_sos ? `<div class="sosbox">${people(d.people_count)} in danger${d.battery_pct != null ? `, battery ${d.battery_pct}%` : ''}${d.medical_notes ? `<br>Health: ${esc(d.medical_notes)}` : ''}</div>` : ''}
+      ${d.photo_url ? `<img src="${esc(d.photo_url)}" alt="Citizen photo">` : ''}
+      <div class="row">${nav ? `<a class="btn" href="${nav}" target="_blank" rel="noopener">Navigate</a>` : '<span></span>'}
+        ${phone ? `<a class="btn ghost" href="tel:${esc(phone)}">Call reporter</a>` : '<span></span>'}</div>
+      <label class="field" style="margin-top:1rem">Note (optional)<textarea id="note" maxlength="500"></textarea></label>
+      ${['received', 'review', 'assigned', 'escalated'].includes(d.status) ? '<button class="btn big" id="go" type="button">We are on the way</button>' : ''}
+      ${['received', 'assigned', 'in_progress', 'escalated'].includes(d.status) ? '<button class="btn ok big" id="fix" type="button">Fixed: take a photo of the work</button>' : ''}
+      </div>`;
+    $('#back').onclick = () => render();
+    if ($('#go')) $('#go').onclick = () => update(d.id, 'in_progress');
+    if ($('#fix')) $('#fix').onclick = () => { $('#proof').value = ''; $('#proof').click(); };
+    $('#proof').onchange = (e) => { const f = e.target.files[0]; if (f) update(d.id, 'resolved', f); };
+    if (scroll) window.scrollTo(0, 0);
+  }
+  async function update(id, status, photo) {
+    const fd = new FormData();
+    fd.append('status', status);
+    const note = $('#note')?.value.trim(); if (note) fd.append('note', note);
+    if (photo) fd.append('proof', photo, 'proof.jpg');
+    try {
+      const d = await api(`/incidents/${id}/status`, { method: 'POST', body: fd }, 60000);
+      toast(status === 'resolved' ? `${d.ticket_code} marked fixed. The citizen will be asked to confirm.` : `${d.ticket_code}: citizens told the team is on the way.`);
+      if (status === 'resolved') S.current = null;
+      await load();
+    } catch (e) { toast(e.message); }
+  }
+  $('#out').onclick = () => { clearToken(); location.reload(); };
+  if (token()) start(token()); else login();
+})();
+</script>
+</body>
+</html>

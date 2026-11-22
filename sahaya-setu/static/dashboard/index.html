@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sahaya Setu – Control room</title>
+<link rel="icon" href="/shared/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/base.css">
+<link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+<div class="login" id="login" hidden>
+  <form class="login-card" id="login-form">
+    <img src="/shared/icon.svg" alt="" width="48" height="48">
+    <h1>Sahaya Setu control room</h1>
+    <p>Sign in with the staff token for your desk.</p>
+    <label class="field">Staff token<input name="token" autocomplete="off" required></label>
+    <p class="login-error" id="login-error" hidden></p>
+    <button class="btn" type="submit">Sign in</button>
+    <div class="demo">
+      <p>Demo desks</p>
+      <div class="demo-buttons">
+        <button type="button" class="btn small ghost" data-token="control-demo">Control room</button>
+        <button type="button" class="btn small ghost" data-token="elec-demo">Electricity</button>
+        <button type="button" class="btn small ghost" data-token="health-demo">Health</button>
+        <button type="button" class="btn small ghost" data-token="rescue-demo">Rescue</button>
+        <button type="button" class="btn small ghost" data-token="roads-demo">Roads</button>
+        <button type="button" class="btn small ghost" data-token="transport-demo">Transport</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<header class="top">
+  <div class="top-brand"><img src="/shared/icon.svg" alt="" width="28" height="28"><span>Sahaya Setu</span><small id="desk"></small></div>
+  <nav class="views" aria-label="Views">
+    <button type="button" data-view="tickets" aria-current="true">Tickets</button>
+    <button type="button" data-view="alerts">Warnings</button>
+    <button type="button" data-view="sitrep" data-control>Situation report</button>
+    <button type="button" data-view="sms" data-control>SMS log</button>
+  </nav>
+  <div class="counters" id="counters"></div>
+  <div class="top-tools">
+    <button type="button" class="btn small ghost" id="sound">Turn on SOS alarm</button>
+    <button type="button" class="btn small ghost" id="logout">Sign out</button>
+  </div>
+</header>
+<div class="sos-banner" id="sos-banner" hidden></div>
+
+<main>
+  <section class="view view-tickets" id="view-tickets">
+    <aside class="rail">
+      <div class="filters">
+        <select id="f-dept" aria-label="Department"><option value="">All departments</option></select>
+        <div class="seg" id="f-status" role="group" aria-label="Status">
+          <button type="button" data-status="" aria-pressed="true">Open</button>
+          <button type="button" data-status="review">Check</button>
+          <button type="button" data-status="received,escalated">New</button>
+          <button type="button" data-status="assigned,in_progress">Working</button>
+          <button type="button" data-status="resolved">Fixed</button>
+        </div>
+        <input id="f-search" type="search" placeholder="Search ticket, place, phone">
+      </div>
+      <ol class="queue" id="queue"></ol>
+    </aside>
+    <div class="map-wrap">
+      <div id="map" class="map" role="region" aria-label="Map of tickets"></div>
+      <div class="legend">
+        <span><i class="dot sos"></i>SOS</span><span><i class="dot received"></i>New</span><span><i class="dot review"></i>Check</span>
+        <span><i class="dot working"></i>Working</span><span><i class="dot resolved"></i>Fixed</span><span><i class="sq"></i>Shelter</span>
+      </div>
+    </div>
+    <aside class="detail" id="detail" hidden></aside>
+  </section>
+
+  <section class="view view-alerts" id="view-alerts" hidden>
+    <div class="alerts-left">
+      <form class="panel" id="alert-form" data-control>
+        <h2>Send a warning</h2>
+        <p class="hint">People inside the circle see it in the citizen app with their nearest shelter. Click the map to move the circle.</p>
+        <div class="two">
+          <label class="field">Level<select name="level"><option value="red">Red</option><option value="orange" selected>Orange</option><option value="yellow">Yellow</option></select></label>
+          <label class="field">Hazard<input name="hazard" value="Cyclone" required></label>
+        </div>
+        <label class="field">Headline<input name="title" required minlength="3" placeholder="Cyclone expected to cross the coast tonight"></label>
+        <label class="field">Message<textarea name="message" required placeholder="What will happen, and what people should do"></textarea></label>
+        <label class="field">Message in Telugu<textarea name="message_te" lang="te"></textarea></label>
+        <div class="two">
+          <label class="field">Area name<input name="area_name" placeholder="Coastal mandals"></label>
+          <label class="field">Radius (km)<input name="radius_km" type="number" min="1" max="500" value="20" required></label>
+        </div>
+        <div class="two">
+          <label class="field">Ends after (hours)<input name="expires_in_hours" type="number" min="1" max="720" value="48"></label>
+          <label class="field">Centre<input name="centre" readonly></label>
+        </div>
+        <button class="btn" type="submit">Send warning</button>
+      </form>
+      <form class="panel" id="cap-form" data-control>
+        <h2>Import an official CAP alert</h2>
+        <p class="hint">Paste a CAP 1.2 message (the format NDMA SACHET uses) or choose the file.</p>
+        <input type="file" id="cap-file" accept=".xml,.cap,application/xml,text/xml">
+        <textarea name="xml" placeholder="&lt;alert xmlns=&quot;urn:oasis:names:tc:emergency:cap:1.2&quot;&gt;…"></textarea>
+        <button class="btn" type="submit">Import alert</button>
+      </form>
+    </div>
+    <div class="alerts-right">
+      <div id="alert-map" class="map small-map" role="region" aria-label="Warning area"></div>
+      <h2>Warnings</h2>
+      <ol class="alert-list" id="alert-list"></ol>
+      <div id="vulnerable"></div>
+    </div>
+  </section>
+
+  <section class="view view-sitrep" id="view-sitrep" hidden>
+    <div class="panel wide">
+      <div class="sitrep-head">
+        <h2>Situation report</h2>
+        <div><button class="btn" id="sitrep-run" type="button">Write report now</button>
+        <button class="btn ghost" id="sitrep-copy" type="button" disabled>Copy</button>
+        <a class="btn ghost" id="sitrep-download" download="sitrep.txt" hidden>Download</a></div>
+      </div>
+      <p class="hint" id="sitrep-by">Built from live tickets. With an Anthropic API key on the server, Claude writes it in English and Telugu.</p>
+      <div class="facts" id="sitrep-facts"></div>
+      <pre class="sitrep" id="sitrep-text"></pre>
+    </div>
+  </section>
+
+  <section class="view view-sms" id="view-sms" hidden>
+    <div class="panel wide">
+      <h2>SMS sent to citizens</h2>
+      <p class="hint">In demo mode, this list is where outgoing SMS appear.</p>
+      <table class="table"><thead><tr><th>Time</th><th>To</th><th>Ticket</th><th>Message</th></tr></thead><tbody id="sms-rows"></tbody></table>
+    </div>
+  </section>
+</main>
+
+<input type="file" id="proof-input" accept="image/*" capture="environment" hidden>
+<script src="/vendor/leaflet/leaflet.js"></script>
+<script src="/shared/staff.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>
